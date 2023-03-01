@@ -1,13 +1,18 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.event.*;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class GUI extends JFrame {
     public GUI() {
         // Set up the main frame
-        setTitle("Button Example");
+        setTitle("Start Screen");
         setSize(800, 600);
         setLocationRelativeTo(null); // Center on screen
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -21,14 +26,19 @@ public class GUI extends JFrame {
                 new ReportScreen().setVisible(true); // Open the second frame
             }
         });
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+
         JButton button2 = new JButton("Switch to Screen 3");
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the third screen
                 dispose(); // Close the main frame
-                new ThirdFrame().setVisible(true); // Open the third frame
+                new ViewReportScreen().setVisible(true); // Open the third frame
             }
         });
+        button2.setFocusPainted(false);
+        button2.setContentAreaFilled(false);
 
         // Add the buttons to the main frame
         JPanel panel = new JPanel();
@@ -47,7 +57,7 @@ class ReportScreen extends JFrame {
     
     public ReportScreen() {
         // Set up the second frame
-        setTitle("Second Screen");
+        setTitle("Report Screen");
         setSize(800, 600);
         setLocationRelativeTo(null); // Center on screen
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,6 +75,8 @@ class ReportScreen extends JFrame {
             dispose();
             new GUI().setVisible(true);
         });
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
         panel.add(backButton);
 
         titleField = new JTextField(10);
@@ -78,6 +90,8 @@ class ReportScreen extends JFrame {
 
         submitButton = new JButton("Submit");
         submitButton.setBounds(280, 450, 200, 35);
+        submitButton.setFocusPainted(false);
+        submitButton.setContentAreaFilled(false);
         submitButton.addActionListener(onClick -> {
             String title = titleField.getText();
             String description = descField.getText();
@@ -107,16 +121,53 @@ class ReportScreen extends JFrame {
     }
 }
 
-class ThirdFrame extends JFrame {
-    public ThirdFrame() {
+class ViewReportScreen extends JFrame {
+    private JTable table;
+    JPanel panel = new JPanel();
+    
+    public ViewReportScreen() {
+
         // Set up the third frame
-        setTitle("Third Screen");
-        setSize(800, 600);
+        setTitle("View Reports Screen");
+        setSize(800, 800);
         setLocationRelativeTo(null); // Center on screen
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Add a label to the third frame
-        JLabel label = new JLabel("You have switched to the third screen.");
-        getContentPane().add(label);
+        setTitle("Data Viewer");
+        setSize(800, 800);
+        setLocationRelativeTo(null); // Center on screen
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Read data from file and add to table model
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.addColumn("title");
+        tableModel.addColumn("decription ");
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("data.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" \\| ");
+                tableModel.addRow(parts);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Create the table and add to main frame
+        table = new JTable(tableModel);
+        JButton button = new JButton("Switch to Main Screen");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the main screen
+                dispose(); // Close the second frame
+                new GUI().setVisible(true); // Open the main frame
+            }
+        });
+        
+        panel.add(button);
+        JScrollPane scrollPane = new JScrollPane(table);
+        panel.add(scrollPane);
+        getContentPane().add(panel);
     }
 }
 
