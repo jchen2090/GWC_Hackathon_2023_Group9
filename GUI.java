@@ -18,7 +18,7 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create the button
-        JButton button = new JButton("Switch to Screen 2");
+        JButton button = new JButton("Report");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the second screen
@@ -29,7 +29,7 @@ public class GUI extends JFrame {
         button.setFocusPainted(false);
         button.setContentAreaFilled(false);
 
-        JButton button2 = new JButton("Switch to Screen 3");
+        JButton button2 = new JButton("View Reports");
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the third screen
@@ -108,10 +108,11 @@ class ReportScreen extends JFrame {
         FileWriter dataFile;
 
         try {
-            dataFile = new FileWriter("data.txt");
+            dataFile = new FileWriter("data.txt", true);
 
             BufferedWriter writer = new BufferedWriter(dataFile);
             writer.write(title + " | " + description);
+            writer.newLine();
 
             writer.close();
         }
@@ -155,7 +156,7 @@ class ViewReportScreen extends JFrame {
 
         // Create the table and add to main frame
         table = new JTable(tableModel);
-        JButton button = new JButton("Switch to Main Screen");
+        JButton button = new JButton("Back");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the main screen
@@ -163,7 +164,8 @@ class ViewReportScreen extends JFrame {
                 new GUI().setVisible(true); // Open the main frame
             }
         });
-        
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
         panel.add(button);
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane);
